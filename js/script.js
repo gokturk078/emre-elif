@@ -69,6 +69,9 @@ const elements = {
 // ╚══════════════════════════════════════════════════════════════╝
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Performance: Initialize lazy loading first
+    initLazyLoading();
+
     initParticles();
     initCounters();
     initNavigation();
@@ -78,6 +81,115 @@ document.addEventListener('DOMContentLoaded', () => {
     initSpotifyPlayer();
     initFloatingMusicNotes();
 });
+
+// ╔══════════════════════════════════════════════════════════════╗
+// ║                PROFESSIONAL LAZY LOADING                      ║
+// ╚══════════════════════════════════════════════════════════════╝
+
+function initLazyLoading() {
+    // Get all images with loading="lazy" attribute
+    const lazyImages = document.querySelectorAll('img[loading="lazy"]');
+
+    // Check if browser supports Intersection Observer
+    if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    loadImage(img);
+                    observer.unobserve(img);
+                }
+            });
+        }, {
+            rootMargin: '100px 0px', // Start loading 100px before visible
+            threshold: 0.01
+        });
+
+        lazyImages.forEach(img => {
+            // Add skeleton class while loading
+            img.classList.add('lazy-image');
+            img.parentElement?.classList.add('img-skeleton');
+            imageObserver.observe(img);
+        });
+    } else {
+        // Fallback for older browsers
+        lazyImages.forEach(img => loadImage(img));
+    }
+
+    // Also optimize all other images
+    optimizeAllImages();
+}
+
+function loadImage(img) {
+    // Use decode() for smoother rendering
+    if (img.decode) {
+        img.decode()
+            .then(() => {
+                img.classList.add('loaded');
+                img.parentElement?.classList.remove('img-skeleton');
+            })
+            .catch(() => {
+                img.classList.add('loaded');
+                img.parentElement?.classList.remove('img-skeleton');
+            });
+    } else {
+        img.classList.add('loaded');
+        img.parentElement?.classList.remove('img-skeleton');
+    }
+}
+
+function optimizeAllImages() {
+    // Check WebP support
+    const webpSupported = checkWebPSupport();
+
+    // Add loading="lazy" and decoding="async" to all images
+    const allImages = document.querySelectorAll('img:not([loading])');
+    allImages.forEach((img, index) => {
+        // Skip hero background image
+        if (img.closest('.hero-background')) {
+            img.setAttribute('fetchpriority', 'high');
+            img.setAttribute('decoding', 'sync');
+            // Still try WebP for hero
+            if (webpSupported) {
+                switchToWebP(img);
+            }
+        } else {
+            img.setAttribute('loading', 'lazy');
+            img.setAttribute('decoding', 'async');
+            // Switch to WebP if supported
+            if (webpSupported) {
+                switchToWebP(img);
+            }
+        }
+    });
+}
+
+// Check WebP support
+function checkWebPSupport() {
+    const canvas = document.createElement('canvas');
+    if (canvas.getContext && canvas.getContext('2d')) {
+        return canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0;
+    }
+    return false;
+}
+
+// Switch image src to WebP
+function switchToWebP(img) {
+    const src = img.getAttribute('src');
+    if (src && src.endsWith('.png')) {
+        const webpSrc = src.replace('.png', '.webp');
+        // Preload WebP and switch on success
+        const testImg = new Image();
+        testImg.onload = () => {
+            img.src = webpSrc;
+        };
+        testImg.onerror = () => {
+            // Keep original PNG if WebP fails
+            console.log('WebP not available for:', src);
+        };
+        testImg.src = webpSrc;
+    }
+}
 
 // ╔══════════════════════════════════════════════════════════════╗
 // ║                     PARTICLES SYSTEM                          ║

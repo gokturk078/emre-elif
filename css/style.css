@@ -138,11 +138,70 @@ a {
     transition: var(--transition-smooth);
 }
 
-/* Images */
+/* Images - Performance Optimized */
 img {
     max-width: 100%;
     height: auto;
     display: block;
+    /* Hardware acceleration for smoother animations */
+    transform: translateZ(0);
+    will-change: opacity;
+}
+
+/* Lazy Loading Animation */
+.lazy-image {
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+}
+
+.lazy-image.loaded {
+    opacity: 1;
+}
+
+/* Skeleton Loading Effect */
+.img-skeleton {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.08) 100%);
+}
+
+.img-skeleton::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.08) 50%,
+            transparent 100%);
+    animation: skeleton-shimmer 1.5s infinite;
+}
+
+@keyframes skeleton-shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Progressive Image Loading */
+.progressive-image-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+
+.progressive-image-wrapper .placeholder {
+    position: absolute;
+    inset: 0;
+    filter: blur(20px);
+    transform: scale(1.1);
+    transition: opacity 0.5s ease;
+}
+
+.progressive-image-wrapper .placeholder.hidden {
+    opacity: 0;
 }
 
 /* Lists */
@@ -2871,6 +2930,12 @@ p {
 
     .gallery-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .gallery-item {
+        aspect-ratio: 1;
+        height: auto;
     }
 
     .gallery-item:nth-child(1),
@@ -2916,6 +2981,25 @@ p {
     .gallery-grid {
         grid-template-columns: 1fr;
         gap: 15px;
+        padding: 0 10px;
+    }
+
+    .gallery-item {
+        aspect-ratio: 16/10;
+        height: auto;
+    }
+
+    /* Reset span for mobile - all items same size */
+    .gallery-item:nth-child(1),
+    .gallery-item:nth-child(6) {
+        grid-column: span 1;
+        grid-row: span 1;
+    }
+
+    .gallery-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 
     .notes-grid {
@@ -3837,36 +3921,38 @@ p {
     }
 
     .letter-body-premium {
-        font-size: 1.1rem;
-        line-height: 2;
+        font-size: 1rem;
+        line-height: 1.9;
     }
 
     .letter-signature-premium {
-        font-size: 1.6rem;
-    }
-
-    .premium-wax-seal {
-        width: 55px;
-        height: 55px;
-    }
-
-    .seal-heart {
-        font-size: 1.5rem;
-    }
-
-    .epic-quote {
         font-size: 1.4rem;
     }
 
+    .premium-wax-seal {
+        width: 50px;
+        height: 50px;
+        top: -25px;
+    }
+
+    .seal-heart {
+        font-size: 1.3rem;
+    }
+
+    .epic-quote {
+        font-size: 1.2rem;
+        padding: 0 10px;
+    }
+
     .quote-mark {
-        font-size: 2.5rem;
+        font-size: 2rem;
     }
 
     .premium-close-btn {
-        top: 15px;
-        right: 15px;
-        padding: 10px 18px;
-        font-size: 0.9rem;
+        top: 10px;
+        right: 10px;
+        padding: 8px 15px;
+        font-size: 0.85rem;
     }
 
     .close-text {
@@ -3874,19 +3960,600 @@ p {
     }
 
     .close-icon {
-        font-size: 1.5rem;
+        font-size: 1.3rem;
     }
 
     .love-heart {
-        font-size: 1.6rem;
+        font-size: 1.4rem;
     }
 
     .lh-2,
     .lh-4 {
-        font-size: 2rem;
+        font-size: 1.8rem;
     }
 
     .lh-3 {
+        font-size: 1.6rem;
+    }
+
+    /* Gift Modal Scroll Fix */
+    .gift-reveal-modal {
+        padding: 20px 15px;
+        align-items: flex-start;
+        padding-top: 60px;
+    }
+
+    .gift-reveal-content {
+        gap: 30px;
+        max-width: 100%;
+    }
+
+    /* Rose Image Mobile */
+    .premium-roses-container {
+        margin-bottom: 10px;
+    }
+
+    .premium-roses-image {
+        width: 200px;
+        border-radius: 16px;
+    }
+
+    .roses-ring-1 {
+        width: 230px;
+        height: 230px;
+    }
+
+    .roses-ring-2 {
+        width: 260px;
+        height: 260px;
+    }
+
+    .roses-ring-3 {
+        width: 290px;
+        height: 290px;
+    }
+
+    /* Letter Mobile */
+    .premium-letter {
+        width: calc(100% - 30px);
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .letter-paper-premium {
+        padding: 50px 20px 30px;
+        margin: 0 auto;
+        border-radius: 10px;
+        width: 100%;
+    }
+
+    .letter-greeting-premium {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+    }
+
+    /* Epic Closing Mobile */
+    .epic-closing {
+        padding: 0 10px;
+    }
+
+    .quote-wrapper {
+        gap: 5px;
+        margin-bottom: 15px;
+    }
+
+    .infinite-love-hearts {
+        gap: 12px;
+    }
+}
+
+
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║            COMPREHENSIVE MOBILE OPTIMIZATIONS                  ║
+   ╚══════════════════════════════════════════════════════════════╝ */
+
+/* Mobile First Touch Optimizations */
+@media (max-width: 768px) {
+
+    /* Improve Touch Targets - minimum 44px */
+    button,
+    a,
+    .nav-link,
+    .control-btn,
+    .play-btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    /* Hero Section Mobile */
+    .hero {
+        padding-top: 70px;
+        min-height: 100svh;
+        /* Use small viewport height for mobile */
+    }
+
+    .hero-content {
+        padding: 0 15px;
+    }
+
+    .hero-names {
+        font-size: clamp(2.2rem, 12vw, 4rem);
+        line-height: 1.2;
+    }
+
+    .hero-tagline {
+        font-size: clamp(1rem, 4vw, 1.4rem);
+        padding: 0 10px;
+    }
+
+    .hero-counter {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 15px;
+    }
+
+    .counter-item {
+        min-width: 60px;
+        padding: 10px 8px;
+    }
+
+    .counter-number {
+        font-size: 1.6rem;
+    }
+
+    .counter-label {
+        font-size: 0.65rem;
+    }
+
+    /* Navigation Mobile */
+    .navbar {
+        padding: 12px 15px;
+    }
+
+    .nav-logo {
+        font-size: 1.1rem;
+    }
+
+    .nav-menu {
+        width: 85%;
+        max-width: 300px;
+        padding: 60px 20px;
+    }
+
+    .nav-link {
+        font-size: 1.1rem;
+        padding: 12px 20px;
+    }
+
+    /* Letter Section Mobile */
+    .letter-section {
+        padding: 60px 15px;
+    }
+
+    .letter-container {
+        padding: 30px 20px;
+        margin: 0 10px;
+    }
+
+    .letter-greeting {
         font-size: 1.8rem;
+    }
+
+    .letter-body {
+        font-size: 1rem;
+        line-height: 1.9;
+    }
+
+    .letter-signature {
+        font-size: 1.4rem;
+    }
+
+    /* Timeline Mobile */
+    .timeline-section {
+        padding: 60px 15px;
+    }
+
+    .timeline-content h3 {
+        font-size: 1.2rem;
+    }
+
+    .timeline-content p {
+        font-size: 0.95rem;
+    }
+
+    .timeline-image {
+        height: 180px;
+    }
+
+    /* Gallery Mobile */
+    .gallery-section {
+        padding: 60px 15px;
+    }
+
+    .gallery-item {
+        height: 200px;
+    }
+
+    .gallery-overlay {
+        opacity: 1;
+        /* Always visible on mobile */
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 50%);
+    }
+
+    .gallery-overlay h4 {
+        font-size: 0.9rem;
+    }
+
+    /* Counters Section Mobile */
+    .counters-section {
+        padding: 60px 15px;
+    }
+
+    .counter-box {
+        padding: 25px 15px;
+        margin: 0 10px;
+        border-radius: 20px;
+    }
+
+    .counter-box h3 {
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+    }
+
+    .counter-display {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .counter-unit {
+        padding: 15px 10px;
+        min-width: 60px;
+        flex: 1;
+        max-width: 80px;
+        border-radius: 12px;
+    }
+
+    .counter-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+    }
+
+    .counter-label {
+        font-size: 0.55rem;
+        letter-spacing: 1px;
+        margin-top: 5px;
+    }
+
+    /* Notes Section Mobile */
+    .notes-section {
+        padding: 60px 15px;
+    }
+
+    .sticky-note {
+        padding: 20px 15px;
+        min-height: auto;
+    }
+
+    .sticky-note p {
+        font-size: 0.95rem;
+    }
+
+    /* Reasons Section Mobile */
+    .reasons-section {
+        padding: 60px 15px;
+    }
+
+    .reason-card {
+        height: 200px;
+    }
+
+    .reason-front .reason-number {
+        font-size: 2.5rem;
+    }
+
+    .reason-front h3 {
+        font-size: 1.1rem;
+    }
+
+    .reason-back p {
+        font-size: 0.9rem;
+        padding: 15px;
+    }
+
+    /* Music Player Mobile */
+    .our-song-section {
+        padding: 60px 15px;
+    }
+
+    .spotify-player {
+        padding: 25px 15px;
+        max-width: 100%;
+    }
+
+    .album-art-container {
+        width: 180px;
+        height: 180px;
+    }
+
+    .song-title {
+        font-size: 1.2rem;
+    }
+
+    .song-artist {
+        font-size: 0.85rem;
+    }
+
+    .player-controls {
+        gap: 20px;
+    }
+
+    .control-btn {
+        width: 48px;
+        height: 48px;
+    }
+
+    .control-btn svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .play-btn {
+        width: 65px;
+        height: 65px;
+    }
+
+    .play-btn svg {
+        width: 26px;
+        height: 26px;
+    }
+
+    .volume-control {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .volume-slider {
+        width: 100%;
+        max-width: 200px;
+    }
+
+    /* Finale Section Mobile */
+    .finale-section {
+        padding: 60px 15px;
+    }
+
+    .final-title {
+        font-size: 1.8rem;
+    }
+
+    .final-intro {
+        font-size: 1rem;
+        padding: 0 10px;
+    }
+
+    /* Footer Mobile */
+    .footer {
+        padding: 25px 15px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Extra Small Devices (< 480px) */
+@media (max-width: 480px) {
+
+    /* Hero Adjustments */
+    .hero-names {
+        font-size: clamp(1.8rem, 14vw, 2.8rem);
+    }
+
+    .hero-tagline {
+        font-size: 0.95rem;
+    }
+
+    .hero-counter {
+        gap: 8px;
+    }
+
+    .counter-item {
+        min-width: 50px;
+        padding: 8px 6px;
+    }
+
+    .counter-number {
+        font-size: 1.4rem;
+    }
+
+    /* Section Titles */
+    .section-title {
+        font-size: 1.8rem;
+    }
+
+    .section-subtitle {
+        font-size: 0.9rem;
+    }
+
+    /* Timeline Extra Small */
+    .timeline-item {
+        padding-left: 45px;
+    }
+
+    .timeline::before {
+        left: 12px;
+    }
+
+    .timeline-item::before {
+        left: 6px;
+        width: 12px;
+        height: 12px;
+    }
+
+    .timeline-content {
+        padding: 15px;
+    }
+
+    /* Counter Units Extra Small */
+    .counter-display {
+        gap: 8px;
+    }
+
+    .counter-unit {
+        padding: 12px 8px;
+        min-width: 50px;
+        max-width: 65px;
+        border-radius: 10px;
+    }
+
+    .counter-value {
+        font-size: 1.5rem;
+    }
+
+    .counter-label {
+        font-size: 0.5rem;
+    }
+
+    /* Sticky Notes Extra Small */
+    .sticky-note {
+        padding: 15px 12px;
+    }
+
+    .sticky-note p {
+        font-size: 0.85rem;
+    }
+
+    /* Reason Cards Extra Small */
+    .reason-card {
+        height: 180px;
+    }
+
+    .reason-front .reason-number {
+        font-size: 2rem;
+    }
+
+    /* Gift Box Extra Small */
+    .gift-box {
+        width: 100px;
+        height: 100px;
+    }
+
+    .gift-body {
+        width: 90px;
+        height: 75px;
+    }
+
+    .gift-lid {
+        width: 100px;
+        height: 22px;
+    }
+
+    .gift-hint {
+        font-size: 1rem;
+    }
+
+    /* Music Player Extra Small */
+    .album-art-container {
+        width: 150px;
+        height: 150px;
+    }
+
+    .song-title {
+        font-size: 1.1rem;
+    }
+
+    .player-controls {
+        gap: 15px;
+    }
+
+    .control-btn {
+        width: 44px;
+        height: 44px;
+    }
+
+    .play-btn {
+        width: 56px;
+        height: 56px;
+    }
+}
+
+/* Landscape Mode Optimizations */
+@media (max-height: 500px) and (orientation: landscape) {
+    .hero {
+        min-height: auto;
+        padding: 80px 20px 40px;
+    }
+
+    .hero-names {
+        font-size: 2.5rem;
+    }
+
+    .hero-counter {
+        flex-wrap: nowrap;
+    }
+
+    .counter-item {
+        padding: 8px 10px;
+    }
+}
+
+/* Safe Area Insets for Notched Devices */
+@supports (padding: max(0px)) {
+    .navbar {
+        padding-left: max(15px, env(safe-area-inset-left));
+        padding-right: max(15px, env(safe-area-inset-right));
+    }
+
+    .footer {
+        padding-bottom: max(25px, env(safe-area-inset-bottom));
+    }
+
+    .nav-menu {
+        padding-bottom: max(60px, env(safe-area-inset-bottom));
+    }
+}
+
+/* Reduce Motion for Accessibility */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .lazy-image {
+        transition: none;
+    }
+}
+
+/* Dark Mode Optimizations */
+@media (prefers-color-scheme: dark) {
+    .letter-paper-premium {
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+    }
+}
+
+/* Print Styles */
+@media print {
+
+    .navbar,
+    .nav-toggle,
+    .player-controls,
+    .volume-control,
+    .particles-container,
+    .floating-hearts,
+    .gift-box-container {
+        display: none !important;
+    }
+
+    body {
+        background: white;
+        color: black;
+    }
+
+    .hero-background {
+        opacity: 0.3;
     }
 }

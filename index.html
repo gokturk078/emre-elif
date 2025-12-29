@@ -12,7 +12,118 @@
     <link rel="icon"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💕</text></svg>">
 
-    <!-- CSS -->
+    <!-- Preconnect for Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Preload Critical Images (WebP for faster loading) -->
+    <link rel="preload" as="image" href="images/backgrounds/30_starry_night.webp" type="image/webp"
+        fetchpriority="high">
+    <link rel="preload" as="image" href="images/backgrounds/30_starry_night.png" fetchpriority="high">
+
+    <!-- Critical CSS Inline for Faster First Paint -->
+    <style>
+        /* Critical CSS for above-the-fold content */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        html {
+            scroll-behavior: smooth
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0d0015 0%, #1a0b2e 30%, #16213e 70%, #0d0015 100%);
+            color: #fff;
+            line-height: 1.7;
+            overflow-x: hidden;
+            min-height: 100vh
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            padding-top: 80px
+        }
+
+        .hero-background {
+            position: absolute;
+            inset: 0;
+            z-index: -2
+        }
+
+        .hero-background img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.4
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 0%, rgba(13, 0, 21, 0.3) 50%, rgba(13, 0, 21, 0.95) 100%);
+            z-index: -1
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            padding: 0 20px
+        }
+
+        .hero-names {
+            font-family: Georgia, serif;
+            font-size: clamp(3rem, 10vw, 7rem);
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #e94560 0%, #ffd700 50%, #e94560 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text
+        }
+
+        /* Skeleton loading styles */
+        .img-skeleton {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.05) 100%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s ease-in-out infinite
+        }
+
+        @keyframes skeleton-loading {
+            0% {
+                background-position: 200% 0
+            }
+
+            100% {
+                background-position: -200% 0
+            }
+        }
+
+        .lazy-image {
+            opacity: 0;
+            transition: opacity 0.5s ease
+        }
+
+        .lazy-image.loaded {
+            opacity: 1
+        }
+    </style>
+
+    <!-- CSS (loaded async for performance) -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 
